@@ -3,6 +3,10 @@
 Ask a question about IIT Kanpur, get an answer with a citation back to the exact
 page or PDF it came from.
 
+**[Try it →](https://iitk-rag.proudbay-827b9367.centralindia.azurecontainerapps.io/ui)**
+&nbsp;·&nbsp; the app scales to zero, so the first question after a quiet spell
+takes ~30s while the model loads.
+
 ![The AskIITK chat page](docs/screenshots/ui-home.png)
 
 A language model asked about IIT Kanpur will answer confidently and sometimes
@@ -24,10 +28,7 @@ Two halves that never run at the same time.
 
 ### Build — pages become a searchable index
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/build-dark.svg">
-  <img alt="sources.yaml to crawler to parser and chunker to indexer to Qdrant" src="docs/diagrams/build-light.svg">
-</picture>
+![sources.yaml to crawler to parser and chunker to indexer to Qdrant](docs/diagrams/build.svg)
 
 Only the URLs in `sources.yaml` are fetched, plus links one hop out that match a
 per-source pattern — that hop is what pulls in 172 individual course pages. Pages
@@ -36,10 +37,7 @@ retrieval later filters and cites on, then embedded into Qdrant.
 
 ### Answering — a question becomes a cited answer
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/diagrams/query-dark.svg">
-  <img alt="chat request through resolve, embed, search, diversify, Gemini, and citation mapping" src="docs/diagrams/query-light.svg">
-</picture>
+![chat request through resolve, embed, search, diversify, Gemini, and citation mapping](docs/diagrams/query.svg)
 
 Three things happen before the search that make the difference. A follow-up gets
 the subject it omitted put back. A time-relative question gets the current year,
