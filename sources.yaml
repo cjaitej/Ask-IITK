@@ -1,0 +1,121 @@
+# ---------------------------------------------------------------------------
+# AskIITK — the locked source list
+#
+# v1 rule: NO open-ended crawling. Only the exact URLs below are fetched,
+# plus PDFs linked from those pages that match `pdf_include`.
+# Adding a 4th source is a v2 decision, not a config tweak.
+# ---------------------------------------------------------------------------
+
+version: 1
+
+sources:
+  - id: admissions
+    name: "IITK Admissions"
+    url: "https://www.iitk.ac.in/new/admissions"
+    department: "Admissions"          # manual mapping — no auto-tagging in v1
+    follow_pdfs: true
+    max_pdfs: 6
+    pdf_include: []                   # empty = accept any linked PDF (up to max_pdfs)
+
+  - id: academic_calendar
+    name: "IITK Academic Calendar (DOAA)"
+    url: "https://www.iitk.ac.in/doaa/academic-calendar"
+    department: "Academic Affairs (DOAA)"
+    follow_pdfs: true
+    max_pdfs: 6
+    # This page links ~73 PDFs going back to 2013. v1 only wants the current ones.
+    pdf_include:
+      - "Calendar-2026"
+      - "Calendar-2025"
+      - "Holidays-2026"
+      # Holidays-2025.pdf is a scan with no text layer — the chunker skips it
+      # and says so. OCR is a v2 problem, so it is not fetched at all.
+      - "eMasters_Academic_calendars-2025"
+
+  - id: cse_department
+    name: "IITK Department of Computer Science and Engineering"
+    url: "https://www.cse.iitk.ac.in/"
+    department: "Computer Science and Engineering"
+    follow_pdfs: true
+    max_pdfs: 4
+    pdf_include:
+      - "PhD"
+      - "Program"
+
+  # --- Added after v1 shipped: faculty + courses depth for CSE ---
+  # Both are static HTML with no linked PDFs worth indexing.
+
+  - id: cse_faculty
+    name: "IITK CSE Faculty"
+    url: "https://www.cse.iitk.ac.in/pages/Faculty.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+
+  - id: cse_courses
+    name: "IITK CSE Courses Offered"
+    url: "https://www.cse.iitk.ac.in/pages/Courses.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+    # The catalogue only lists code + title. Each row links a detail page with
+    # Units, Pre-requisites, Course Contents and References — that is where
+    # "what is CS345 about?" is actually answered. One hop, CSE host only.
+    follow_links: true
+    link_pattern: '/pages/(CS|ESC|ESO)[0-9A-Z]+\.html$'
+    max_links: 220
+
+  # --- Added to close measured gaps: instructors, timings, curriculum ---
+  # A diagnostic batch of 18 realistic questions failed 15 of them. These six
+  # pages cover the two largest clusters: "who teaches X / when / where" and
+  # "what does the programme look like".
+
+  - id: cse_timetable
+    name: "IITK CSE Course Timetable (Current Semester)"
+    url: "https://www.cse.iitk.ac.in/pages/CourseTimetable.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+
+  - id: cse_btech
+    name: "IITK CSE BTech Programme"
+    url: "https://www.cse.iitk.ac.in/pages/ProgramBTech.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+
+  - id: cse_mtech
+    name: "IITK CSE MTech Programme"
+    url: "https://www.cse.iitk.ac.in/pages/ProgramMTech.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+
+  - id: cse_ms
+    name: "IITK CSE MS Programme"
+    url: "https://www.cse.iitk.ac.in/pages/ProgramMS.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+
+  - id: cse_phd
+    name: "IITK CSE PhD Programme"
+    url: "https://www.cse.iitk.ac.in/pages/ProgramPhD.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []
+
+  - id: cse_minors
+    name: "IITK CSE Minor Programmes"
+    url: "https://www.cse.iitk.ac.in/pages/MinorPrograms.html"
+    department: "Computer Science and Engineering"
+    follow_pdfs: false
+    max_pdfs: 0
+    pdf_include: []

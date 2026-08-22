@@ -1,0 +1,24 @@
+# --- Ingestion ---
+requests>=2.32
+beautifulsoup4>=4.12
+lxml>=5.3
+pdfplumber>=0.11
+PyYAML>=6.0
+
+# --- RAG core (LlamaIndex + Qdrant + BGE Small + Gemini) ---
+# Qdrant is talked to through qdrant-client directly (see rag/vector_store.py);
+# llama-index supplies the embedding and LLM wrappers only.
+llama-index-core>=0.12
+llama-index-embeddings-huggingface>=0.5
+llama-index-llms-google-genai>=0.1
+qdrant-client>=1.12
+
+# --- API ---
+fastapi>=0.115
+uvicorn[standard]>=0.34
+pydantic>=2.10
+pydantic-settings>=2.7
+python-dotenv>=1.0
+
+# --- Dev / eval ---
+pytest>=8.3

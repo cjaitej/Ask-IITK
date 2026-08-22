@@ -1,0 +1,6 @@
+{
+  "fingerprint": "b84c9988b8693f6b40705aff41b12a9da57a146b8eb314c618b74c79eb07a7a9",
+  "model": "BAAI/bge-small-en-v1.5",
+  "n": 352,
+  "dim": 384
+}

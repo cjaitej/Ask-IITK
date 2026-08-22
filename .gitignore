@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.pytest_cache/
+.DS_Store
+
+# Crawled + derived data: reproducible from sources.yaml
+data/raw/html/
+data/raw/pdf/
+data/raw/manifest.json
+data/processed/
+data/qdrant_local/
+
+# data/chunks/ is NOT ignored: the Docker build reads chunks.jsonl and the
+# embedding cache out of the build context, so a fresh clone has to carry
+# them or `docker build` has nothing to index. ~1.2 MB, and it makes the
+# image reproducible without a crawl.

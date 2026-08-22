@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AskIITK</title>
+<style>
+  /* Near-neutral, one accent. A single quiet blue keeps the text primary. */
+  :root {
+    --bg:        #fcfcfb;
+    --surface:   #f2f2ef;
+    --border:    #e7e7e2;
+    --border-soft:#efefea;
+    --text:      #1b1b19;
+    --muted:     #74746d;
+    --faint:     #9a9a92;
+    --accent:    #35548a;
+    --accent-bg: #eaeff7;
+    --danger:    #9a3b30;
+    --danger-bg: #fbf0ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #17171a;
+      --surface:   #232327;
+      --border:    #303036;
+      --border-soft:#26262b;
+      --text:      #ecebe8;
+      --muted:     #9c9c96;
+      --faint:     #6f6f6a;
+      --accent:    #93b4e6;
+      --accent-bg: #21293a;
+      --danger:    #e59288;
+      --danger-bg: #2c1f1d;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 400 15.5px/1.65 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+  }
+  .col { width: 100%; max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------------- header ---------------- */
+  header {
+    flex: 0 0 auto;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg);
+  }
+  .head {
+    display: flex; align-items: center; gap: 12px;
+    height: 56px;
+  }
+  .brand {
+    font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em;
+    margin: 0; white-space: nowrap;
+  }
+  #status {
+    flex: 1 1 auto; min-width: 0;
+    font-size: 0.75rem; color: var(--faint);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #status .dot {
+    display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--faint); margin-right: 6px; vertical-align: middle;
+  }
+  #status.ok   .dot { background: #5c9b6f; }
+  #status.warn .dot { background: #c2952f; }
+  #status.bad  .dot { background: var(--danger); }
+  .head button {
+    flex: 0 0 auto;
+    background: none; border: 0; padding: 4px 2px;
+    color: var(--faint); font: inherit; font-size: 0.78rem; cursor: pointer;
+  }
+  .head button:hover { color: var(--text); }
+
+  /* ---------------- thread ---------------- */
+  #thread { flex: 1 1 auto; overflow-y: auto; scroll-behavior: smooth; }
+  #thread-inner { padding: 32px 0 8px; }
+
+  .msg { margin-bottom: 30px; }
+
+  /* User: a compact right-aligned pill. */
+  .msg.user { display: flex; justify-content: flex-end; }
+  .msg.user .body {
+    background: var(--surface);
+    border-radius: 16px 16px 4px 16px;
+    padding: 9px 15px;
+    max-width: 78%;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  /* No bubble: the answer is the page's content, not a message in it. */
+  .msg.bot .body { overflow-wrap: anywhere; }
+
+  /* Markdown renders as real blocks. Edge margins collapse so a one-paragraph
+     answer still sits flush with the citations under it. */
+  .msg.bot .body > :first-child { margin-top: 0; }
+  .msg.bot .body > :last-child { margin-bottom: 0; }
+  .msg.bot .body p { margin: 0 0 12px; }
+  .msg.bot .body ul,
+  .msg.bot .body ol { margin: 0 0 12px; padding-left: 20px; }
+  .msg.bot .body li { margin: 4px 0; padding-left: 2px; }
+  .msg.bot .body li::marker { color: var(--faint); }
+  .msg.bot .body ul ul,
+  .msg.bot .body ol ol { margin: 4px 0 0; }
+  .msg.bot .body strong { font-weight: 600; }
+  .msg.bot .body h3, .msg.bot .body h4,
+  .msg.bot .body h5, .msg.bot .body h6 {
+    font-size: 0.9rem; font-weight: 600; letter-spacing: -0.005em;
+    margin: 18px 0 6px;
+  }
+  .msg.bot .body code {
+    font-family: ui-monospace, SFMono-Regular, "Cascadia Mono", Consolas, monospace;
+    font-size: 0.86em;
+    background: var(--surface); border-radius: 4px; padding: 1px 5px;
+  }
+  .msg.bot .body pre {
+    background: var(--surface); border-radius: 9px;
+    padding: 11px 13px; margin: 0 0 12px; overflow-x: auto;
+  }
+  .msg.bot .body pre code { background: none; padding: 0; font-size: 0.82em; }
+  /* Tables scroll in their own box; the page never scrolls sideways. */
+  .tw { overflow-x: auto; margin: 0 0 12px; }
+  .msg.bot .body table { border-collapse: collapse; font-size: 0.85em; }
+  .msg.bot .body th, .msg.bot .body td {
+    border: 1px solid var(--border); padding: 5px 10px;
+    text-align: left; vertical-align: top; white-space: nowrap;
+  }
+  .msg.bot .body th { font-weight: 600; background: var(--surface); }
+
+  .msg.bot.err .body {
+    background: var(--danger-bg);
+    border-radius: 10px;
+    padding: 12px 15px;
+    color: var(--danger);
+  }
+
+  cite {
+    font-style: normal; font-weight: 600; font-size: 0.78em;
+    color: var(--accent); background: var(--accent-bg);
+    border-radius: 4px; padding: 1px 4px;
+    cursor: pointer; vertical-align: 1px;
+  }
+  cite:hover { filter: brightness(0.94); }
+
+  /* Sources: an appendix, not a second card. */
+  .sources { margin-top: 16px; }
+  .sources summary {
+    font-size: 0.76rem; color: var(--faint); cursor: pointer;
+    list-style: none; display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 0;
+  }
+  .sources summary::-webkit-details-marker { display: none; }
+  .sources summary::before {
+    content: "▸"; font-size: 0.7em; transition: transform 0.15s ease;
+  }
+  .sources[open] summary::before { transform: rotate(90deg); }
+  .sources summary:hover { color: var(--muted); }
+  ol.src {
+    list-style: none; margin: 10px 0 0; padding: 0 0 0 2px;
+    border-left: 2px solid var(--border);
+  }
+  ol.src li { display: flex; gap: 9px; padding: 5px 0 5px 12px; }
+  .num {
+    flex: 0 0 auto; font-size: 0.7rem; font-weight: 600;
+    color: var(--accent); margin-top: 3px;
+  }
+  .src-body { min-width: 0; font-size: 0.8rem; line-height: 1.45; color: var(--muted); }
+  .src-link {
+    display: block; color: var(--faint); font-size: 0.73rem;
+    word-break: break-all; text-decoration: none;
+  }
+  .src-link:hover { color: var(--accent); }
+  .meta { margin-top: 12px; color: var(--faint); font-size: 0.72rem; }
+
+  /* ---------------- empty state ---------------- */
+  .empty { padding: 48px 0 24px; }
+  .empty h2 {
+    font-size: 1.15rem; font-weight: 600; letter-spacing: -0.015em;
+    margin: 0 0 8px; text-align: center;
+  }
+  .empty > p {
+    margin: 0 auto 30px; color: var(--muted); font-size: 0.88rem;
+    max-width: 46ch; text-align: center;
+  }
+
+  /* Example prompts, grouped by the part of the corpus that answers them. */
+  .ex-groups { display: grid; gap: 22px 28px; }
+  @media (min-width: 640px) { .ex-groups { grid-template-columns: 1fr 1fr; } }
+  .ex-group h3 {
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--faint); font-weight: 600; margin: 0 0 7px;
+  }
+  .ex-list { display: flex; flex-direction: column; gap: 5px; }
+  .ex-list button {
+    background: none; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 9px;
+    padding: 7px 12px; font: inherit; font-size: 0.82rem; line-height: 1.4;
+    cursor: pointer; text-align: left;
+    transition: border-color 0.12s, color 0.12s;
+  }
+  .ex-list button:hover { color: var(--text); border-color: var(--faint); }
+
+  /* The same list, reopened from the header mid-conversation. */
+  .ex-panel {
+    border-top: 1px solid var(--border-soft);
+    margin: 8px 0 26px; padding-top: 22px;
+  }
+  .ex-panel-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .ex-panel-head p { margin: 0; font-size: 0.82rem; color: var(--muted); }
+  .ex-close {
+    background: none; border: 0; color: var(--faint);
+    font: inherit; font-size: 0.76rem; cursor: pointer; padding: 2px;
+  }
+  .ex-close:hover { color: var(--text); }
+
+  .thinking { color: var(--faint); display: flex; align-items: center; gap: 9px; }
+  .spinner {
+    width: 12px; height: 12px; flex: 0 0 auto;
+    border: 2px solid var(--border); border-top-color: var(--faint);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation: none; }
+    #thread { scroll-behavior: auto; }
+  }
+
+  /* ---------------- composer ---------------- */
+  footer { flex: 0 0 auto; background: var(--bg); padding-bottom: 18px; }
+  .composer {
+    display: flex; gap: 8px; align-items: flex-end;
+    background: var(--bg);
+    border: 1px solid var(--border); border-radius: 14px;
+    padding: 7px 7px 7px 15px;
+    transition: border-color 0.12s;
+  }
+  .composer:focus-within { border-color: var(--faint); }
+  textarea {
+    flex: 1 1 auto; border: 0; background: none; color: var(--text);
+    font: inherit; resize: none; outline: none;
+    max-height: 176px; padding: 6px 0;
+  }
+  textarea::placeholder { color: var(--faint); }
+  #go {
+    flex: 0 0 auto; width: 32px; height: 32px;
+    display: grid; place-items: center;
+    background: var(--text); color: var(--bg);
+    border: 0; border-radius: 9px; cursor: pointer;
+    transition: opacity 0.12s;
+  }
+  #go:disabled { opacity: 0.28; cursor: default; }
+  #go:hover:not(:disabled) { opacity: 0.85; }
+  #go svg { width: 15px; height: 15px; display: block; }
+  .hint {
+    margin: 9px 0 0; text-align: center;
+    color: var(--faint); font-size: 0.7rem;
+  }
+
+  @media (max-width: 560px) {
+    .col { padding: 0 16px; }
+    .msg.user .body { max-width: 88%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="col head">
+    <p class="brand">AskIITK</p>
+    <span id="status"><span class="dot"></span><span id="status-text">checking index…</span></span>
+    <button id="show-examples" type="button">Examples</button>
+    <button id="reset" type="button">New chat</button>
+  </div>
+</header>
+
+<div id="thread"><div class="col" id="thread-inner"></div></div>
+
+<footer>
+  <div class="col">
+    <form id="ask-form">
+      <div class="composer">
+        <textarea id="q" rows="1" placeholder="Ask about admissions, courses, faculty, the calendar…"
+                  autocomplete="off" autofocus></textarea>
+        <button id="go" type="submit" aria-label="Send">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 13V3M3.5 7.5L8 3l4.5 4.5"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+    <p class="hint">Answers come only from indexed IITK pages · Enter to send, Shift+Enter for a new line</p>
+  </div>
+</footer>
+
+<script>
+/* One group per part of the corpus, three questions each. All of them were run
+   against the live pipeline and answered correctly, so this is a tour of what
+   the index covers rather than a wish list.
+
+   The first in each group shows an ability the other two do not, explained in
+   its tooltip. It is styled like its siblings on purpose. */
+const CATEGORIES = [
+  { label: "Course content", questions: [
+      { q: "Compare the pre-requisites of CS335 and CS330.",
+        shows: "Looks up two course codes exactly, then compares them — similarity search alone cannot tell CS335 from CS330." },
+      "What is CS345 about?",
+      "How many units is CS340?"
+  ]},
+  { label: "Who teaches what", questions: [
+      { q: "Which CSE courses are taught in classroom RM101 this semester?",
+        shows: "Reads down the timetable and filters by a column that is not the subject of the question." },
+      "Who teaches CS771?",
+      "How many credits is CS781?"
+  ]},
+  { label: "Faculty", questions: [
+      { q: "I'm interested in security research — which courses and faculty should I look at?",
+        shows: "Answers from two different sources at once, matching on meaning rather than on the word you typed." },
+      "Which CSE faculty work on cryptography?",
+      "What is Amey Karkare's phone number and office?"
+  ]},
+  { label: "Calendar & holidays", questions: [
+      { q: "Are we in a semester or a recess right now, and when does it change?",
+        shows: "Knows today's date and works out where it falls in the calendar, instead of just quoting dates." },
+      "What is the present semester?",
+      "On what date is Diwali a holiday in 2026?"
+  ]},
+  { label: "Admissions", questions: [
+      { q: "How do M.Tech and PhD admission requirements differ?",
+        shows: "Pulls two sets of requirements out of one page and contrasts them." },
+      "What are the eligibility requirements for M.Tech?",
+      "What is the age limit for JEE admission?"
+  ]},
+  { label: "Programmes", questions: [
+      { q: "What does the minor in Theoretical Computer Science involve?",
+        shows: "Gives the specific courses and credit requirement, not just the name of the minor." },
+      "What is the structure of the BTech CSE curriculum?",
+      "What minor programs does CSE offer?"
+  ]},
+  { label: "Department", questions: [
+      { q: "Why is the IITK CSE department historically significant?",
+        shows: "Answers an open question by drawing the relevant facts together, still with citations." },
+      "When was the CSE department started?",
+      "What awards has the CSE department won recently?"
+  ]}
+];
+const STORE_KEY = "askiitk-thread";
+const MAX_STORED = 40;
+
+const $ = (id) => document.getElementById(id);
+const threadEl = $("thread");
+const innerEl = $("thread-inner");
+
+/* messages: {role:"user"|"assistant", content, sources?, meta?, error?} */
+let messages = load();
+let busy = false;
+let showExamples = false;
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(messages.slice(-MAX_STORED))); }
+  catch { /* private window or storage blocked; the thread will not persist */ }
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* A small Markdown renderer — only the blocks answers actually use. No
+   reference links, no blockquotes, no HTML passthrough.
+
+   Everything runs on text esc() has already escaped, so the only tags that
+   reach the DOM are the ones written below. Do not reorder those two steps. */
+
+function inlineMd(s) {
+  return s
+    // Code first, so its contents are not read as emphasis.
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    // Single * only when it is not half of a ** pair.
+    .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>")
+    .replace(/\[(\d+)\]/g, '<cite data-n="$1">$1</cite>');
+}
+
+const RE_UL = /^\s*[-*+]\s+(.*)$/;
+const RE_OL = /^\s*\d+[.)]\s+(.*)$/;
+const RE_BLOCK = /^\s*([-*+]\s|\d+[.)]\s|#{1,6}\s|```|>)/;
+
+/* A GFM pipe table needs the |---|---| divider. Without it, a line with pipes
+   is just a line with pipes — which timetable answers produce constantly. */
+function tableAt(lines, i) {
+  if (!lines[i] || lines[i].indexOf("|") === -1) return null;
+  if (!/^\s*\|?[\s:|-]*-[\s:|-]*\|[\s:|-]*$/.test(lines[i + 1] || "")) return null;
+
+  const cells = (row) =>
+    row.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map(c => c.trim());
+
+  const head = cells(lines[i]);
+  let n = i + 2;
+  const body = [];
+  while (n < lines.length && lines[n].trim() && lines[n].indexOf("|") !== -1) {
+    body.push(cells(lines[n]));
+    n++;
+  }
+
+  const th = head.map(c => "<th>" + inlineMd(c) + "</th>").join("");
+  const rows = body.map(r =>
+    "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>").join("");
+  return {
+    html: '<div class="tw"><table><thead><tr>' + th + "</tr></thead><tbody>"
+          + rows + "</tbody></table></div>",
+    next: n,
+  };
+}
+
+function renderAnswer(text) {
+  const lines = esc(text).replace(/\r\n?/g, "\n").split("\n");
+  const out = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (!line.trim()) { i++; continue; }
+
+    if (/^\s*```/.test(line)) {
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) { buf.push(lines[i]); i++; }
+      i++;  // closing fence, or end of text
+      out.push("<pre><code>" + buf.join("\n") + "</code></pre>");
+      continue;
+    }
+
+    const heading = line.match(/^\s*(#{1,6})\s+(.*)$/);
+    if (heading) {
+      // Never h1/h2: the answer sits inside the page, not above it.
+      const level = Math.min(heading[1].length + 2, 6);
+      out.push("<h" + level + ">" + inlineMd(heading[2]) + "</h" + level + ">");
+      i++;
+      continue;
+    }
+
+    const table = tableAt(lines, i);
+    if (table) { out.push(table.html); i = table.next; continue; }
+
+    const ul = RE_UL.test(line);
+    if (ul || RE_OL.test(line)) {
+      const re = ul ? RE_UL : RE_OL;
+      const items = [];
+      while (i < lines.length) {
+        const item = lines[i].match(re);
+        if (item) { items.push(item[1]); i++; continue; }
+        // An indented line starting no new block continues the item above it.
+        if (items.length && lines[i].trim() && /^\s{2,}/.test(lines[i])
+            && !RE_BLOCK.test(lines[i])) {
+          items[items.length - 1] += " " + lines[i].trim();
+          i++;
+          continue;
+        }
+        break;
+      }
+      out.push("<" + (ul ? "ul" : "ol") + ">"
+        + items.map(t => "<li>" + inlineMd(t) + "</li>").join("")
+        + "</" + (ul ? "ul" : "ol") + ">");
+      continue;
+    }
+
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !RE_BLOCK.test(lines[i])
+           && !tableAt(lines, i)) {
+      para.push(lines[i].trim());
+      i++;
+    }
+    // Guard against spinning on a block starter no branch above consumed.
+    if (!para.length) { out.push("<p>" + inlineMd(lines[i].trim()) + "</p>"); i++; continue; }
+    out.push("<p>" + inlineMd(para.join(" ")) + "</p>");
+  }
+
+  return out.join("");
+}
+
+function renderSources(sources, idx) {
+  if (!sources || !sources.length) return "";
+  const items = sources.map(s => {
+    const bits = [esc(s.source_name)];
+    if (s.page) bits.push("page " + s.page);
+    if (s.heading) bits.push(esc(s.heading));
+    return `<li id="s${idx}-${s.citation}">
+        <span class="num">${s.citation}</span>
+        <span class="src-body">${bits.join(" · ")}
+          <a class="src-link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>
+        </span>
+      </li>`;
+  }).join("");
+  const label = sources.length === 1 ? "1 source" : `${sources.length} sources`;
+  return `<details class="sources" open><summary>${label}</summary>
+            <ol class="src">${items}</ol></details>`;
+}
+
+function exampleGroups() {
+  return `<div class="ex-groups">${CATEGORIES.map(c => {
+    const items = c.questions.map(item => {
+      // A plain string, or {q, shows} where `shows` becomes the tooltip.
+      const q = typeof item === "string" ? item : item.q;
+      const tip = typeof item === "string" ? "" : ` title="${esc(item.shows)}"`;
+      return `<button type="button" data-ex="${esc(q)}"${tip}>${esc(q)}</button>`;
+    }).join("");
+    return `<div class="ex-group">
+      <h3>${esc(c.label)}</h3>
+      <div class="ex-list">${items}</div>
+    </div>`;
+  }).join("")}</div>`;
+}
+
+function wireExamples() {
+  innerEl.querySelectorAll("[data-ex]").forEach(b =>
+    b.addEventListener("click", () => { showExamples = false; send(b.dataset.ex); }));
+  const close = innerEl.querySelector(".ex-close");
+  if (close) close.addEventListener("click", () => { showExamples = false; render(); });
+}
+
+function render() {
+  if (!messages.length && !busy) {
+    showExamples = false;  // the empty state already shows them
+    innerEl.innerHTML = `<div class="empty">
+        <h2>Ask about IIT Kanpur</h2>
+        <p>Answers come from official IITK pages, with a citation for every claim.
+           Follow-ups work — try “Who teaches CS771?”, then “and the classroom?”</p>
+        ${exampleGroups()}
+      </div>`;
+    wireExamples();
+    return;
+  }
+
+  innerEl.innerHTML = messages.map((m, i) => {
+    if (m.role === "user") {
+      return `<div class="msg user"><div class="body">${esc(m.content)}</div></div>`;
+    }
+    const meta = m.meta ? `<p class="meta">${esc(m.meta)}</p>` : "";
+    return `<div class="msg bot${m.error ? " err" : ""}">
+              <div class="body">${renderAnswer(m.content)}</div>
+              ${renderSources(m.sources, i)}${meta}
+            </div>`;
+  }).join("")
+    + (busy
+      ? `<div class="msg bot"><div class="body thinking"><span class="spinner"></span>Searching the indexed sources…</div></div>`
+      : "")
+    + (showExamples && !busy
+      ? `<div class="ex-panel">
+           <div class="ex-panel-head">
+             <p>Things you can ask</p>
+             <button class="ex-close" type="button">Close</button>
+           </div>
+           ${exampleGroups()}
+         </div>`
+      : "");
+
+  if (showExamples) wireExamples();
+
+  // Clicking [n] jumps to the source backing it.
+  innerEl.querySelectorAll("cite[data-n]").forEach(c =>
+    c.addEventListener("click", () => {
+      const msg = c.closest(".msg");
+      const details = msg.querySelector("details.sources");
+      if (details) details.open = true;
+      const target = msg.querySelector(`[id$="-${c.dataset.n}"]`);
+      if (target) target.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }));
+
+  threadEl.scrollTop = threadEl.scrollHeight;
+}
+
+async function refreshStatus() {
+  const el = $("status"), txt = $("status-text");
+  try {
+    const h = await (await fetch("/health")).json();
+    const pts = h.qdrant.points;
+    if (!pts) {
+      el.className = "bad";
+      txt.textContent = "index empty — run python -m scripts.build_all";
+    } else if (!h.generation_enabled) {
+      el.className = "warn";
+      txt.textContent = `${pts} chunks · no GEMINI_API_KEY, answers disabled`;
+    } else {
+      el.className = "ok";
+      txt.textContent = `${pts} chunks · ${h.llm}`;
+    }
+  } catch {
+    el.className = "bad";
+    txt.textContent = "cannot reach the API";
+  }
+}
+
+async function send(text) {
+  const question = (text ?? $("q").value).trim();
+  if (question.length < 3 || busy) return;
+
+  // The server resolves "it"/"that" against these.
+  const history = messages.map(m => ({ role: m.role, content: m.content }));
+
+  messages.push({ role: "user", content: question });
+  $("q").value = "";
+  autoGrow();
+  busy = true;
+  $("go").disabled = true;
+  render();
+
+  try {
+    const res = await fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, history })
+    });
+
+    if (res.status === 429) {
+      const wait = res.headers.get("Retry-After") || "60";
+      messages.push({ role: "assistant", error: true,
+        content: `Gemini's free tier allows 15 requests a minute, and that is used up. Wait about ${wait}s and ask again.` });
+    } else {
+      const data = await res.json();
+      if (!res.ok) {
+        messages.push({ role: "assistant", error: true,
+          content: data.detail || `Request failed (HTTP ${res.status})` });
+      } else {
+        messages.push({ role: "assistant", content: data.answer,
+          sources: data.sources, meta: `${data.model} · ${(data.latency_ms / 1000).toFixed(1)}s` });
+      }
+    }
+  } catch {
+    messages.push({ role: "assistant", error: true,
+      content: "Could not reach the API. Is uvicorn still running?" });
+  } finally {
+    busy = false;
+    $("go").disabled = false;
+    save();
+    render();
+    $("q").focus();
+  }
+}
+
+function autoGrow() {
+  const t = $("q");
+  t.style.height = "auto";
+  t.style.height = Math.min(t.scrollHeight, 176) + "px";
+}
+
+$("ask-form").addEventListener("submit", (e) => { e.preventDefault(); send(); });
+$("q").addEventListener("input", autoGrow);
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
+});
+$("reset").addEventListener("click", () => {
+  messages = [];
+  showExamples = false;
+  save();
+  render();
+  $("q").focus();
+});
+
+$("show-examples").addEventListener("click", () => {
+  if (!messages.length) { $("q").focus(); return; }  // already on screen
+  showExamples = !showExamples;
+  render();
+});
+
+render();
+refreshStatus();
+</script>
+</body>
+</html>

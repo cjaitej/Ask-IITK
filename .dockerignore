@@ -1,0 +1,26 @@
+.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.git/
+.gitignore
+.pytest_cache/
+
+# Secrets never enter the image — GEMINI_API_KEY is injected at runtime.
+.env
+.env.example
+
+# Crawl output and the local index are rebuilt in the builder stage;
+# only data/chunks/ is part of the build context.
+data/raw/
+data/processed/
+data/qdrant_local/
+
+docs/
+tests/
+scripts/
+README.md
+*.md
+deploy/
+docker-compose*.yml
+Dockerfile

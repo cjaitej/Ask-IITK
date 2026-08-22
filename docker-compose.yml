@@ -1,0 +1,29 @@
+# Run the app from the self-contained image: model and index baked in, nothing
+# else needed. Same shape as the Azure deployment, so `up` is a real rehearsal.
+#
+#   docker compose up --build
+#
+# For a real Qdrant instead of the baked-in index, layer the server overlay:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.server.yml up --build
+#
+# GEMINI_API_KEY comes from .env at runtime and is never baked into the image.
+# Without it the app still starts; only /chat returns 503.
+
+name: askiitk
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: askiitk:v1
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      QDRANT_MODE: local
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-iitk_documents_v1}
+      TOP_K: ${TOP_K:-6}
+    restart: unless-stopped

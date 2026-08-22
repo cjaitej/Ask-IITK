@@ -1,0 +1,370 @@
+# Phase 7 — v1 evaluation set.
+#
+# 27 questions, hand-verified against the indexed chunks on 2026-08-22.
+# Every `verified_answer` was read off the actual source document, not
+# recalled — if a source page changes, re-verify before trusting a score.
+#
+# Faculty and course pages joined the corpus after v1 shipped; their questions
+# (F*, K*) were verified the same way.
+#
+# Fields:
+#   expected_source_id       which source should be retrieved
+#   expected_doc             the specific page/PDF the answer lives in
+#   verified_answer          the ground truth, for manual grading
+#   expected_answer_contains substrings whose presence is a hint, not a grade
+
+version: 1
+
+questions:
+  # ---------------------------------------------------------------- admissions
+  - id: A1
+    question: "How and when are admissions to the B.Tech programme at IIT Kanpur made?"
+    expected_source_id: admissions
+    expected_doc: "https://www.iitk.ac.in/admissions"
+    verified_answer: >-
+      Once a year in July, through the Joint Entrance Examination (JEE) conducted
+      at an All India level in April/May. Admission is offered on the basis of
+      the candidate's choice against their All India Rank in JEE.
+    expected_answer_contains: ["July", "Joint Entrance Examination"]
+
+  - id: A2
+    question: "What is the age limit for admission through JEE at IIT Kanpur?"
+    expected_source_id: admissions
+    expected_doc: "https://www.iitk.ac.in/admissions"
+    verified_answer: >-
+      Not more than 25 years of age, or 30 years for SC/ST candidates, as on
+      1st October after admission.
+    expected_answer_contains: ["25", "30", "SC/ST"]
+
+  - id: A3
+    question: "Which entrance examination is used for M.Sc. admissions at IIT Kanpur?"
+    expected_source_id: admissions
+    expected_doc: "https://www.iitk.ac.in/admissions"
+    verified_answer: >-
+      The Joint Admission Test to M.Sc. (JAM), an All India level examination
+      held once a year. It covers the 2-year M.Sc. and the M.Sc.-Ph.D. dual degree.
+    expected_answer_contains: ["JAM"]
+
+  - id: A4
+    question: "What exam do I need for the MBA programme at IIT Kanpur, and when is it held?"
+    expected_source_id: admissions
+    expected_doc: "https://www.iitk.ac.in/admissions"
+    verified_answer: >-
+      The CAT examination, held around December every year. Admissions happen
+      once a year and the advertisement is generally released the day after the
+      CAT result is declared. The programme is run by the Department of
+      Industrial & Management Engineering (DIME).
+    expected_answer_contains: ["CAT", "December"]
+
+  - id: A5
+    question: "What are the eligibility requirements for the M.Tech programme at IIT Kanpur?"
+    expected_source_id: admissions
+    expected_doc: "https://www.iitk.ac.in/admissions"
+    verified_answer: >-
+      A pass in the qualifying examination — B.Tech/B.E. or M.Sc. in the
+      appropriate area — plus a valid GATE score. Candidates sponsored by
+      industry or research organisations are exempt from GATE. Admission is made
+      twice a year (July and December) and the course runs four semesters.
+    expected_answer_contains: ["GATE", "B. Tech"]
+
+  - id: A6
+    question: "What qualification is needed to apply for a PhD at IIT Kanpur?"
+    expected_source_id: admissions
+    expected_doc: "https://www.iitk.ac.in/admissions"
+    verified_answer: >-
+      A Master's degree in Engineering, Science, or Humanities and Social
+      Sciences, or an allied area. Applicants with a Bachelor's degree in
+      Engineering may also be considered on performance. For Science and HSS,
+      a qualified GATE/UGC/CSIR examination is additionally required. Final
+      selection is on the basis of an interview.
+    expected_answer_contains: ["Master", "GATE", "interview"]
+
+  # --------------------------------------------------------- academic calendar
+  - id: C1
+    question: "When do classes commence for the 2026-27-I semester at IIT Kanpur?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: "July 30, 2026 (Thursday)."
+    expected_answer_contains: ["July 30", "2026"]
+
+  - id: C2
+    question: "When do classes end in the 2026-27-I semester?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: "November 13, 2026 (Friday)."
+    expected_answer_contains: ["Nov", "13"]
+
+  - id: C3
+    question: "What are the registration dates for the 2025-26-II semester?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: >-
+      January 5-8, 2026 for registration; academic registration is Jan 5, 2026
+      (Mon) and late registration is Jan 12, 2026 (Mon).
+    expected_answer_contains: ["Jan 5", "2026"]
+
+  - id: C4
+    question: "When is the end semester examination for the 2026-27-I semester?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: "November 16-26, 2026 (Monday to Thursday)."
+    expected_answer_contains: ["Nov 16", "26"]
+
+  - id: C5
+    question: "When is the mid semester recess in the 2026-27-I semester?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: "October 18-25, 2026 (Sunday to Sunday)."
+    expected_answer_contains: ["Oct 18", "25"]
+
+  - id: C6
+    question: "On what date is Diwali a gazetted holiday at IIT Kanpur in 2026?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Holidays-2026.pdf"
+    verified_answer: "November 08, 2026, a Sunday (Kartika 17, Saka era 1948)."
+    expected_answer_contains: ["November 08", "Sunday"]
+
+  - id: C7
+    question: "Is Republic Day a gazetted holiday at IIT Kanpur in 2026, and on which day does it fall?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Holidays-2026.pdf"
+    verified_answer: >-
+      Yes — it is the first gazetted holiday on the 2026 list, on January 26,
+      2026, a Monday.
+    expected_answer_contains: ["January 26", "Monday"]
+
+  - id: C8
+    question: "When do eMasters classes commence in the January 2025 quarter?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/eMasters_Academic_calendars-2025.pdf"
+    verified_answer: "January 13, 2025 (Monday)."
+    expected_answer_contains: ["Jan 13", "2025"]
+
+  # ------------------------------------------------------------ CSE department
+  - id: D1
+    question: "When was the Computer Science and Engineering department at IIT Kanpur started?"
+    expected_source_id: cse_department
+    expected_doc: "https://www.cse.iitk.ac.in/"
+    verified_answer: >-
+      August 1963, with an IBM 1620 system. It was the first department in India
+      to start Computer Science education.
+    expected_answer_contains: ["1963", "IBM 1620"]
+
+  - id: D2
+    question: "Which degree programmes does the CSE department at IIT Kanpur run?"
+    expected_source_id: cse_department
+    expected_doc: "https://www.cse.iitk.ac.in/"
+    verified_answer: "BTech, MTech, MS and PhD programmes."
+    expected_answer_contains: ["BTech", "MTech", "PhD"]
+
+  - id: D3
+    question: "Who was awarded the 2026 PK Kelkar Young Faculty Fellowship in CSE?"
+    expected_source_id: cse_department
+    expected_doc: "https://www.cse.iitk.ac.in/"
+    verified_answer: >-
+      Prof. Priyanka Vijay Bagade, who leads the IoT Vision lab and works on IoT
+      and computer vision. The fellowship honours IIT Kanpur's founding director
+      Prof. P. K. Kelkar and goes to faculty under 40.
+    expected_answer_contains: ["Priyanka"]
+
+  - id: D4
+    question: "Who is the guest of honour for Convocation 2026 at IIT Kanpur CSE?"
+    expected_source_id: cse_department
+    expected_doc: "https://www.cse.iitk.ac.in/"
+    verified_answer: >-
+      Rajnish Kumar, co-founder and Group Co-CEO of ixigo, a CSE alumnus who
+      received the Distinguished Alumni Award in 2023.
+    expected_answer_contains: ["Rajnish Kumar", "ixigo"]
+
+  # ------------------------------------------------- CSE faculty (added later)
+  - id: F1
+    question: "What are Nitin Saxena's research areas in the CSE department?"
+    expected_source_id: cse_faculty
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Faculty.html"
+    verified_answer: >-
+      Computational Complexity Theory, Algebra, Algebraic Geometry and
+      Theoretical Computer Science. He is a Professor and holds the N Rama Rao
+      Chair Professorship.
+    expected_answer_contains: ["Complexity", "Algebra"]
+
+  - id: F2
+    question: "Who holds the Poonam & Prabhu Goel Chair Professorship in CSE at IIT Kanpur?"
+    expected_source_id: cse_faculty
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Faculty.html"
+    verified_answer: >-
+      Amey Karkare, a Professor in CSE, office RM-401, working on Compilers,
+      Program Analysis & Code Optimization, Functional Programming, and
+      Programming Languages and Education.
+    expected_answer_contains: ["Karkare"]
+
+  - id: F3
+    question: "Which CSE faculty members work on cryptography?"
+    expected_source_id: cse_faculty
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Faculty.html"
+    verified_answer: >-
+      Adithya Vadapalli (Applied Cryptography, Private Information Retrieval,
+      Secure Multiparty Computation, Zero-Knowledge Proofs, Oblivious RAMs) and
+      Angshuman Karmakar (Post Quantum Cryptography, Side-Channel attacks,
+      Computation on encrypted data, Cryptology).
+    expected_answer_contains: ["Vadapalli", "Karmakar"]
+
+  - id: F4
+    question: "What is Sunil Simon's designation and what does he work on?"
+    expected_source_id: cse_faculty
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Faculty.html"
+    verified_answer: >-
+      Associate Professor, working on Game Theory, Distributed Systems, and
+      Temporal Logics and Verification.
+    expected_answer_contains: ["Associate Professor", "Game Theory"]
+
+  - id: F5
+    question: "How are the email addresses of CSE faculty at IIT Kanpur formed?"
+    expected_source_id: cse_faculty
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Faculty.html"
+    verified_answer: >-
+      The email id is the faculty member's username at cse.iitk.ac.in — the
+      username is listed in brackets next to each name.
+    expected_answer_contains: ["cse.iitk.ac.in"]
+
+  # ------------------------------------------------- CSE courses (added later)
+  - id: K1
+    question: "What is the course CS335 at IIT Kanpur CSE?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Courses.html"
+    verified_answer: "CS335 is Compiler Design."
+    expected_answer_contains: ["Compiler Design"]
+
+  - id: K2
+    question: "Which CSE course code covers Theory of Computation?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Courses.html"
+    verified_answer: "CS340."
+    expected_answer_contains: ["CS340"]
+
+  - id: K3
+    question: "Does IIT Kanpur CSE offer a course on cryptology, and what is its code?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Courses.html"
+    verified_answer: >-
+      Yes — CS641 Modern Cryptology. Related offerings include CS670
+      Cryptographic Techniques for Privacy Preservation and CS674 Post Quantum
+      Security.
+    expected_answer_contains: ["CS641"]
+
+  - id: K4
+    question: "Is there a Human-Computer Interaction course in the CSE department?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/Courses.html"
+    verified_answer: "Yes — CS798H Human-Computer Interaction."
+    expected_answer_contains: ["CS798H"]
+
+  # ------------------------------------------------------ time-relative (T*)
+  # These depend on when the eval is run. `verified_answer` records the date it
+  # was checked; re-verify against the calendar rather than trusting it blindly.
+  - id: T1
+    question: "what is the present sem name?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: >-
+      As of 22 August 2026: the 2026-27-I semester. Classes commenced July 30,
+      2026 and end November 13, 2026, so today falls inside it. TIME-DEPENDENT —
+      after Nov 13, 2026 the correct answer changes.
+    expected_answer_contains: ["2026-27-I"]
+
+  - id: T2
+    question: "When does the current semester end?"
+    expected_source_id: academic_calendar
+    expected_doc: "https://www.iitk.ac.in/doaa/data/Calendar-2026.pdf"
+    verified_answer: >-
+      As of 22 August 2026: November 13, 2026 (Friday), the end of classes for
+      2026-27-I. TIME-DEPENDENT.
+    expected_answer_contains: ["Nov", "13"]
+
+  # ------------------------------------- timetable + programmes (added later)
+  - id: X1
+    question: "Who teaches CS771 Introduction to Machine Learning?"
+    expected_source_id: cse_timetable
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CourseTimetable.html"
+    verified_answer: "Piyush Rai (piyush@cse.iitk.ac.in). CS771, 3-0-3-0 (12 credits)."
+    expected_answer_contains: ["Piyush Rai"]
+
+  - id: X2
+    question: "What time and classroom is CS771 held in?"
+    expected_source_id: cse_timetable
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CourseTimetable.html"
+    verified_answer: "Wednesdays and Fridays 18:10-19:25, in classroom L20."
+    expected_answer_contains: ["18:10", "L20"]
+
+  - id: X3
+    question: "What is the email address of the instructor for CS731?"
+    expected_source_id: cse_timetable
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CourseTimetable.html"
+    verified_answer: >-
+      somitra@iitk.ac.in — CS731 Blockchain Technology and Applications is
+      taught by Somitra Kumar Sanadhya.
+    expected_answer_contains: ["somitra"]
+
+  - id: X4
+    question: "Which courses is Nitin Saxena teaching this semester?"
+    expected_source_id: cse_timetable
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CourseTimetable.html"
+    verified_answer: >-
+      CS748 Arithmetic Circuit Complexity, TuTh 12:00-13:15 in KD102.
+      TIME-DEPENDENT — reflects the timetable as crawled on 22 August 2026.
+    expected_answer_contains: ["CS748"]
+
+  - id: X5
+    question: "What minor programs does the CSE department offer?"
+    expected_source_id: cse_minors
+    expected_doc: "https://www.cse.iitk.ac.in/pages/MinorPrograms.html"
+    verified_answer: >-
+      Four: Algorithms, Computer Systems, Theoretical Computer Science, and
+      Intelligent Systems.
+    expected_answer_contains: ["Algorithms", "Computer Systems"]
+
+  - id: X6
+    question: "What is the structure of the BTech CSE curriculum?"
+    expected_source_id: cse_btech
+    expected_doc: "https://www.cse.iitk.ac.in/pages/ProgramBTech.html"
+    verified_answer: >-
+      Two parts: the Core Curriculum (institute-wide foundation) and the
+      Professional Curriculum (departmental courses).
+    expected_answer_contains: ["Core", "Professional"]
+
+  # ---------------------------------- course detail pages (added later)
+  # These exercise exact course-code lookup: 182 course pages are structurally
+  # near-identical, so similarity search alone cannot tell CS345 from CS346.
+  - id: Y1
+    question: "What are the pre-requisites for CS345?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CS345.html"
+    verified_answer: "ESC101 and CS210. CS345 is Algorithms II, Units 3-0-0-9."
+    expected_answer_contains: ["ESC101", "CS210"]
+
+  - id: Y2
+    question: "What is CS345 about?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CS345.html"
+    verified_answer: >-
+      Algorithms II — amortized analysis, advanced data structures, the greedy /
+      divide-and-conquer / dynamic-programming paradigms revisited with
+      theoretical foundations, graph algorithms, pattern matching, max flow,
+      and NP-completeness.
+    expected_answer_contains: ["Algorithms II"]
+
+  - id: Y3
+    question: "How many units is CS340?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CS340.html"
+    verified_answer: "9 units (3-0-0-9). CS340 is Theory of Computation."
+    expected_answer_contains: ["9"]
+
+  - id: Y4
+    question: "What topics are covered in CS771?"
+    expected_source_id: cse_courses
+    expected_doc: "https://www.cse.iitk.ac.in/pages/CS771.html"
+    verified_answer: >-
+      Introduction to Machine Learning — mathematical foundations (multivariate
+      calculus, linear algebra, probability), supervised and unsupervised
+      learning, and related topics.
+    expected_answer_contains: ["Machine Learning"]

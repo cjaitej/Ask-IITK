@@ -1,0 +1,53 @@
+# Overlay: run against a real Qdrant instead of the index baked into the image.
+# Useful while iterating on the corpus, since the collection can be reloaded
+# without rebuilding. Payload indexes only apply in this mode.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.server.yml up -d --build
+#   docker compose -f docker-compose.yml -f docker-compose.server.yml run --rm indexer
+#
+# The volume survives `down`; `down -v` takes the collection with it.
+
+services:
+  qdrant:
+    image: qdrant/qdrant:v1.19.0
+    ports:
+      - "6333:6333"   # REST, and the dashboard at /dashboard
+      - "6334:6334"   # gRPC
+    volumes:
+      - qdrant-storage:/qdrant/storage
+    healthcheck:
+      # No curl in the image, so an open TCP port is the readiness signal.
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/6333' || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  app:
+    environment:
+      QDRANT_MODE: server
+      QDRANT_URL: http://qdrant:6333
+    depends_on:
+      qdrant:
+        condition: service_healthy
+
+  # One-shot, not part of `up`. Built from the builder stage because that is the
+  # only one carrying ingestion/ and data/chunks/.
+  indexer:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      QDRANT_MODE: server
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-iitk_documents_v1}
+    command: ["python", "-m", "ingestion.indexer", "--recreate"]
+    depends_on:
+      qdrant:
+        condition: service_healthy
+
+volumes:
+  qdrant-storage:
