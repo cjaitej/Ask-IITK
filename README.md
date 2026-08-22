@@ -3,9 +3,8 @@
 Ask a question about IIT Kanpur, get an answer with a citation back to the exact
 page or PDF it came from.
 
-**[Try it →](https://iitk-rag.proudbay-827b9367.centralindia.azurecontainerapps.io/ui)**
-&nbsp;·&nbsp; the app scales to zero, so the first question after a quiet spell
-takes ~30s while the model loads.
+**[Try the Demo](https://iitk-rag.proudbay-827b9367.centralindia.azurecontainerapps.io/ui)**
+&nbsp;·&nbsp; Cold starts take about 30 seconds because the app scales to zero when idle.
 
 ![The AskIITK chat page](docs/screenshots/ui-home.png)
 
